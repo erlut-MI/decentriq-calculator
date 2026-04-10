@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Addressability Calculator — Decentriq</title>
+<style>
+  /* ============================================================
+     DECENTRIQ BRAND TOKENS
+     ============================================================
+     #FFFFFF    white — backgrounds, text on dark
+     #020B1A    off-black — primary text, dark backgrounds
+     #B9B9B9    light grey — borders, grid lines, remnant bar
+     #14B8A6    primary teal — buttons, key metrics, teal bar
+     #926DE4    purple — secondary (unused here, available)
+     #407AF6    blue — enrichment layer bar
+     #F19B3F    orange — secondary (unused here, available)
+  ============================================================ */
+
+  :root {
+    --teal: #14B8A6;
+    --blue: #407AF6;
+    --grey: #B9B9B9;
+    --black: #020B1A;
+    --white: #FFFFFF;
+    --surface: #F4F4F4;
+    --border: rgba(185,185,185,0.5);
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--white);
+    color: var(--black);
+    padding: 2rem 1.5rem 3rem;
+    max-width: 680px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  .header { margin-bottom: 2rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--grey); }
+  .header-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); margin-bottom: 6px; }
+  .header-title { font-size: 22px; font-weight: 500; color: var(--black); margin-bottom: 8px; }
+  .header-desc { font-size: 14px; color: #555; line-height: 1.6; }
+
+  .sec-title { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #777; margin: 0 0 1rem; }
+
+  .row { margin-bottom: 1.25rem; }
+  .lbl { font-size: 13px; color: #555; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; gap: 8px; }
+  .lbl-left { display: flex; align-items: center; flex-wrap: wrap; }
+  .lbl .val { font-size: 14px; font-weight: 600; color: var(--black); white-space: nowrap; }
+
+  input[type=range] {
+    width: 100%;
+    height: 4px;
+    appearance: none;
+    background: var(--grey);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--black);
+    cursor: pointer;
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--black);
+    border: none;
+    cursor: pointer;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 7px;
+    white-space: nowrap;
+  }
+  .b-teal { background: rgba(20,184,166,0.15); color: #0a7a6e; }
+  .b-blue { background: rgba(64,122,246,0.15); color: #1a4db8; }
+
+  .tier-bar { display: flex; height: 28px; border-radius: 6px; overflow: hidden; margin: 1rem 0 0.5rem; }
+  .tier-label-row { display: flex; align-items: flex-start; font-size: 11px; color: #777; margin-bottom: 1.5rem; min-height: 22px; }
+
+  .divider { border: none; border-top: 1px solid var(--grey); margin: 1.5rem 0; }
+
+  .cpm-row { display: flex; gap: 16px; margin-bottom: 1.25rem; }
+  .cpm-col { flex: 1; min-width: 0; }
+
+  .results-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 1.25rem; }
+  .mc { background: var(--surface); border-radius: 8px; padding: 1rem; }
+  .mc-label { font-size: 12px; color: #555; margin-bottom: 4px; line-height: 1.4; }
+  .mc-sub { font-size: 10px; color: #999; display: block; margin-top: 2px; }
+  .mc-value { font-size: 22px; font-weight: 600; color: var(--black); margin-top: 6px; }
+  .mc-value.uplift { color: var(--teal); }
+
+  .note {
+    font-size: 11px;
+    color: #999;
+    line-height: 1.7;
+    margin-top: 1.25rem;
+    padding: 12px 14px;
+    border: 1px solid var(--grey);
+    border-radius: 8px;
+  }
+  .note strong { color: #777; font-weight: 600; }
+
+  .cta-row { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--grey); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .cta-text { font-size: 13px; color: #555; }
+  .cta-btn {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+    background: var(--teal);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .cta-btn:hover { opacity: 0.88; }
+
+  @media (max-width: 480px) {
+    .results-grid { grid-template-columns: 1fr; }
+    .cpm-row { flex-direction: column; }
+    .cta-row { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<p class="sec-title">Your inventory</p>
+
+<div class="row">
+  <div class="lbl">
+    <span>Monthly page views</span>
+    <span class="val" id="pv-out">50M</span>
+  </div>
+  <input type="range" min="1" max="500" value="50" step="1" id="pv" oninput="upd()">
+</div>
+
+<div class="row">
+  <div class="lbl">
+    <span class="lbl-left"><span class="badge b-teal">Deterministic core</span>Current authentication rate</span>
+    <span class="val" id="auth-out">15%</span>
+  </div>
+  <input type="range" min="1" max="80" value="15" step="1" id="auth" oninput="upd()">
+</div>
+
+<div class="row">
+  <div class="lbl">
+    <span class="lbl-left"><span class="badge b-blue">Enrichment layer</span>Traffic with 30+ days navigation history</span>
+    <span class="val" id="enrich-out">40%</span>
+  </div>
+  <input type="range" min="0" max="80" value="40" step="1" id="enrich" oninput="upd()">
+</div>
+
+<div class="tier-bar" id="tier-bar"></div>
+<div class="tier-label-row" id="tier-labels"></div>
+
+<hr class="divider">
+
+<p class="sec-title">CPM assumptions</p>
+<div class="cpm-row">
+  <div class="cpm-col">
+    <div class="lbl">Remnant (untargeted) CPM <span class="val" id="rem-cpm-out">€1.20</span></div>
+    <input type="range" min="0.5" max="5" value="1.2" step="0.1" id="rem-cpm" oninput="upd()">
+  </div>
+  <div class="cpm-col">
+    <div class="lbl">Enriched CPM uplift multiplier <span class="val" id="mult-out">2×</span></div>
+    <input type="range" min="1.5" max="4" value="2" step="0.5" id="mult" oninput="upd()">
+  </div>
+</div>
+
+<div class="results-grid">
+  <div class="mc">
+    <div class="mc-label">Baseline remnant revenue<span class="mc-sub">no enrichment applied</span></div>
+    <div class="mc-value" id="base-rev">—</div>
+  </div>
+  <div class="mc">
+    <div class="mc-label">Revenue after enrichment<span class="mc-sub">deterministic + lookalike</span></div>
+    <div class="mc-value" id="enriched-rev">—</div>
+  </div>
+  <div class="mc">
+    <div class="mc-label">Collaboration uplift<span class="mc-sub">monthly delta</span></div>
+    <div class="mc-value uplift" id="delta">—</div>
+  </div>
+</div>
+
+<div class="note">
+  <strong>How this is calculated:</strong> Ads per page assumed at 5. Authenticated traffic (deterministic core) is billed at enriched CPM. Anonymous traffic with 30+ days of navigation history is eligible for lookalike targeting and billed at enriched CPM (remnant CPM × uplift multiplier). Remaining anonymous traffic without sufficient history is billed at remnant CPM. Baseline assumes all traffic billed at remnant CPM with no enrichment applied. Actual match rates, history depth, and CPM uplifts will vary by publisher and partner.
+</div>
+
+
+
+<script>
+  function fmt(n) {
+    if (n >= 1000000) return '€' + (n / 1000000).toFixed(1) + 'M';
+    if (n >= 1000) return '€' + Math.round(n / 1000) + 'K';
+    return '€' + Math.round(n);
+  }
+
+  function upd() {
+    var pv      = parseInt(document.getElementById('pv').value) * 1000000;
+    var auth    = parseInt(document.getElementById('auth').value) / 100;
+    var enrich  = parseInt(document.getElementById('enrich').value) / 100;
+    var remCpm  = parseFloat(document.getElementById('rem-cpm').value);
+    var mult    = parseFloat(document.getElementById('mult').value);
+    var ads     = 5;
+
+    document.getElementById('pv-out').textContent      = Math.round(pv / 1000000) + 'M';
+    document.getElementById('auth-out').textContent    = Math.round(auth * 100) + '%';
+    document.getElementById('enrich-out').textContent  = Math.round(enrich * 100) + '%';
+    document.getElementById('rem-cpm-out').textContent = '€' + remCpm.toFixed(2);
+    document.getElementById('mult-out').textContent    = mult.toFixed(1) + '×';
+
+    var enrichedCpm    = remCpm * mult;
+    var anonPct        = 1 - auth;
+    var enrichablePct  = Math.min(enrich, anonPct);
+    var trueRemnantPct = Math.max(0, anonPct - enrichablePct);
+
+    var authImps    = pv * auth * ads;
+    var enrichImps  = pv * enrichablePct * ads;
+    var remnantImps = pv * trueRemnantPct * ads;
+
+    var baseRev     = pv * ads * remCpm / 1000;
+    var enrichedRev = (authImps * enrichedCpm + enrichImps * enrichedCpm + remnantImps * remCpm) / 1000;
+    var delta       = enrichedRev - baseRev;
+
+    document.getElementById('base-rev').textContent     = fmt(baseRev);
+    document.getElementById('enriched-rev').textContent = fmt(enrichedRev);
+    document.getElementById('delta').textContent        = fmt(delta);
+
+    var authP   = Math.round(auth * 100);
+    var enrichP = Math.round(enrichablePct * 100);
+    var remP    = Math.round(trueRemnantPct * 100);
+
+    document.getElementById('tier-bar').innerHTML =
+      '<div style="width:' + authP + '%;background:#14B8A6"></div>' +
+      '<div style="width:' + enrichP + '%;background:#407AF6;border-left:1px solid #fff"></div>' +
+      '<div style="width:' + remP + '%;background:#B9B9B9;border-left:1px solid #fff"></div>';
+
+    document.getElementById('tier-labels').innerHTML =
+      '<div style="width:' + authP + '%"><span class="badge b-teal">' + authP + '% deterministic</span></div>' +
+      '<div style="width:' + enrichP + '%"><span class="badge b-blue">' + enrichP + '% enrichment</span></div>' +
+      '<div style="width:' + remP + '%;text-align:right;padding-right:2px;font-size:11px;color:#999">' + remP + '% remnant</div>';
+  }
+
+  upd();
+</script>
+</body>
+</html>
