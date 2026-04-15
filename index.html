@@ -147,7 +147,7 @@
     <span>Monthly page views</span>
     <span class="val" id="pv-out">50M</span>
   </div>
-  <input type="range" min="1" max="500" value="50" step="1" id="pv" oninput="upd()">
+  <input type="range" min="1" max="2000" value="50" step="10" id="pv" oninput="upd()">
 </div>
 
 <div class="row">
@@ -206,9 +206,15 @@
 
 <script>
   function fmt(n) {
+    if (n >= 1000000000) return '€' + (n / 1000000000).toFixed(2) + 'B';
     if (n >= 1000000) return '€' + (n / 1000000).toFixed(1) + 'M';
     if (n >= 1000) return '€' + Math.round(n / 1000) + 'K';
     return '€' + Math.round(n);
+  }
+
+  function fmtPv(n) {
+    if (n >= 1000) return (n / 1000).toFixed(1) + 'B';
+    return n + 'M';
   }
 
   function upd() {
@@ -219,7 +225,7 @@
     var mult    = parseFloat(document.getElementById('mult').value);
     var ads     = 5;
 
-    document.getElementById('pv-out').textContent      = Math.round(pv / 1000000) + 'M';
+    document.getElementById('pv-out').textContent      = fmtPv(parseInt(document.getElementById('pv').value));
     document.getElementById('auth-out').textContent    = Math.round(auth * 100) + '%';
     document.getElementById('enrich-out').textContent  = Math.round(enrich * 100) + '%';
     document.getElementById('rem-cpm-out').textContent = '€' + remCpm.toFixed(2);
