@@ -5,18 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Addressability Calculator — Decentriq</title>
 <style>
-  /* ============================================================
-     DECENTRIQ BRAND TOKENS
-     ============================================================
-     #FFFFFF    white — backgrounds, text on dark
-     #020B1A    off-black — primary text, dark backgrounds
-     #B9B9B9    light grey — borders, grid lines, remnant bar
-     #14B8A6    primary teal — buttons, key metrics, teal bar
-     #926DE4    purple — secondary (unused here, available)
-     #407AF6    blue — enrichment layer bar
-     #F19B3F    orange — secondary (unused here, available)
-  ============================================================ */
-
   :root {
     --teal: #14B8A6;
     --blue: #407AF6;
@@ -25,7 +13,6 @@
     --white: #FFFFFF;
     --surface: #F4F4F4;
     --border: rgba(185,185,185,0.5);
-    font-family: system-ui, -apple-system, sans-serif;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,79 +20,47 @@
   body {
     background: var(--white);
     color: var(--black);
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 22px;
     padding: 2rem 1.5rem 0.5rem;
     max-width: 680px;
     margin: 0 auto;
     line-height: 1.5;
-    font-size: 22px;
   }
 
-  h1 { font-size: 2rem; }
-  .sec-title { font-size: 15px; }
-  .lbl { font-size: 19px; }
-  .lbl .val { font-size: 20px; }
-  .badge { font-size: 14px; padding: 4px 12px; }
-  .mc-value { font-size: 34px; }
-  .mc-label { font-size: 17px; }
-  .mc-sub { font-size: 14px; }
-  .note { font-size: 15px; }
-  .tier-bar { height: 42px; }
-  .tier-label-row { font-size: 15px; }
-  input[type=range] { height: 8px; }
-  input[type=range]::-webkit-slider-thumb { width: 26px; height: 26px; }
-  input[type=range]::-moz-range-thumb { width: 26px; height: 26px; }
-
-  .header { margin-bottom: 2rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--grey); }
-  .header-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); margin-bottom: 6px; }
-  .header-title { font-size: 22px; font-weight: 500; color: var(--black); margin-bottom: 8px; }
-  .header-desc { font-size: 14px; color: #555; line-height: 1.6; }
-
-  .sec-title { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #777; margin: 0 0 1rem; }
-
+  .sec-title { font-size: 15px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #777; margin: 0 0 1rem; }
   .row { margin-bottom: 1.25rem; }
-  .lbl { font-size: 13px; color: #555; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; gap: 8px; }
+  .lbl { font-size: 19px; color: #555; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; gap: 8px; }
   .lbl-left { display: flex; align-items: center; flex-wrap: wrap; }
-  .lbl .val { font-size: 14px; font-weight: 600; color: var(--black); white-space: nowrap; }
+  .lbl .val { font-size: 20px; font-weight: 600; color: var(--black); white-space: nowrap; }
 
   input[type=range] {
-    width: 100%;
-    height: 4px;
-    appearance: none;
-    background: var(--grey);
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
+    width: 100%; height: 8px;
+    appearance: none; background: var(--grey);
+    border-radius: 4px; outline: none; cursor: pointer;
   }
   input[type=range]::-webkit-slider-thumb {
-    appearance: none;
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    background: var(--black);
-    cursor: pointer;
+    appearance: none; width: 26px; height: 26px;
+    border-radius: 50%; background: var(--black); cursor: pointer;
   }
   input[type=range]::-moz-range-thumb {
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    background: var(--black);
-    border: none;
-    cursor: pointer;
+    width: 26px; height: 26px;
+    border-radius: 50%; background: var(--black); border: none; cursor: pointer;
   }
 
   .badge {
-    display: inline-flex;
-    align-items: center;
-    font-size: 10px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 4px;
-    margin-right: 7px;
-    white-space: nowrap;
+    display: inline-flex; align-items: center;
+    font-size: 14px; font-weight: 600;
+    padding: 4px 12px; border-radius: 4px;
+    margin-right: 7px; white-space: nowrap;
   }
   .b-teal { background: rgba(20,184,166,0.15); color: #0a7a6e; }
   .b-blue { background: rgba(64,122,246,0.15); color: #1a4db8; }
 
-  .tier-bar { display: flex; height: 28px; border-radius: 6px; overflow: hidden; margin: 1rem 0 0.5rem; }
-  .tier-label-row { display: flex; align-items: flex-start; font-size: 11px; color: #777; margin-bottom: 1.5rem; min-height: 22px; }
+  .tier-bar { display: flex; height: 42px; border-radius: 6px; overflow: hidden; margin: 1rem 0 0.5rem; }
+  .tier-label-row { display: flex; gap: 16px; margin-bottom: 1.5rem; margin-top: 8px; font-size: 13px; align-items: center; }
+  .tier-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px; flex-shrink: 0; }
+  .tier-item { display: flex; align-items: center; white-space: nowrap; color: #555; }
 
   .divider { border: none; border-top: 1px solid var(--grey); margin: 1.5rem 0; }
 
@@ -114,43 +69,38 @@
 
   .results-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 1.25rem; }
   .mc { background: var(--surface); border-radius: 8px; padding: 1rem; }
-  .mc-label { font-size: 12px; color: #555; margin-bottom: 4px; line-height: 1.4; }
-  .mc-sub { font-size: 10px; color: #999; display: block; margin-top: 2px; }
-  .mc-value { font-size: 22px; font-weight: 600; color: var(--black); margin-top: 6px; }
+  .mc-label { font-size: 17px; color: #555; margin-bottom: 4px; line-height: 1.4; }
+  .mc-sub { font-size: 14px; color: #999; display: block; margin-top: 2px; }
+  .mc-value { font-size: 34px; font-weight: 600; color: var(--black); margin-top: 6px; }
   .mc-value.uplift { color: var(--teal); }
 
+  .toggle-row {
+    margin-top: 1.25rem;
+    font-size: 13px;
+    color: #999;
+    cursor: pointer;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .toggle-row:hover { color: #555; }
+
   .note {
-    font-size: 11px;
+    font-size: 15px;
     color: #999;
     line-height: 1.7;
-    margin-top: 1.25rem;
     padding: 12px 14px;
     border: 1px solid var(--grey);
     border-radius: 8px;
+    margin-top: 8px;
+    display: none;
   }
-  .note strong { color: #777; font-weight: 600; }
-
-  .cta-row { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--grey); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-  .cta-text { font-size: 13px; color: #555; }
-  .cta-btn {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--white);
-    background: var(--teal);
-    border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    cursor: pointer;
-    white-space: nowrap;
-    text-decoration: none;
-    display: inline-block;
-  }
-  .cta-btn:hover { opacity: 0.88; }
+  .note.open { display: block; }
 
   @media (max-width: 480px) {
     .results-grid { grid-template-columns: 1fr; }
     .cpm-row { flex-direction: column; }
-    .cta-row { flex-direction: column; align-items: flex-start; }
   }
 </style>
 </head>
@@ -214,13 +164,20 @@
   </div>
 </div>
 
-<div class="note">
-  <strong>How this is calculated:</strong> Ads per page assumed at 5. Authenticated traffic (deterministic core) is billed at enriched CPM. Anonymous traffic with 30+ days of navigation history is eligible for lookalike targeting and billed at enriched CPM (remnant CPM × uplift multiplier). Remaining anonymous traffic without sufficient history is billed at remnant CPM. Baseline assumes all traffic billed at remnant CPM with no enrichment applied. Actual match rates, history depth, and CPM uplifts will vary by publisher and partner.
+<div class="toggle-row" id="toggle" onclick="toggleNote()">How is this calculated? ↓</div>
+<div class="note" id="note-body">
+  Ads per page assumed at 5. Authenticated traffic (deterministic core) is billed at enriched CPM. Anonymous traffic with 30+ days of navigation history is eligible for lookalike targeting and billed at enriched CPM (remnant CPM × uplift multiplier). Remaining anonymous traffic without sufficient history is billed at remnant CPM. Baseline assumes all traffic billed at remnant CPM with no enrichment applied. Actual match rates, history depth, and CPM uplifts will vary by publisher and partner.
 </div>
 
-
-
 <script>
+  function toggleNote() {
+    var note = document.getElementById('note-body');
+    var toggle = document.getElementById('toggle');
+    var isOpen = note.classList.contains('open');
+    note.classList.toggle('open');
+    toggle.textContent = isOpen ? 'How is this calculated? ↓' : 'How is this calculated? ↑';
+  }
+
   function fmt(n) {
     if (n >= 1000000000) return '€' + (n / 1000000000).toFixed(2) + 'B';
     if (n >= 1000000) return '€' + (n / 1000000).toFixed(1) + 'M';
@@ -274,9 +231,9 @@
       '<div style="width:' + remP + '%;background:#B9B9B9;border-left:1px solid #fff"></div>';
 
     document.getElementById('tier-labels').innerHTML =
-      '<div style="width:' + authP + '%"><span class="badge b-teal">' + authP + '% deterministic</span></div>' +
-      '<div style="width:' + enrichP + '%"><span class="badge b-blue">' + enrichP + '% enrichment</span></div>' +
-      '<div style="width:' + remP + '%;text-align:right;padding-right:2px;font-size:11px;color:#999">' + remP + '% remnant</div>';
+      '<div class="tier-item"><span class="tier-dot" style="background:#14B8A6"></span>' + authP + '% deterministic</div>' +
+      '<div class="tier-item"><span class="tier-dot" style="background:#407AF6"></span>' + enrichP + '% enrichment</div>' +
+      '<div class="tier-item"><span class="tier-dot" style="background:#B9B9B9"></span>' + remP + '% remnant</div>';
   }
 
   upd();
